@@ -27,14 +27,14 @@ namespace mptr.jira
         {
             if (query?.Search is null)
             {
-                return new List<Result>(0);  // no query.
+                return new List<Result>(0);
             }
 
             var value = query.Search.Trim();
 
             if (string.IsNullOrEmpty(value))
             {
-                return new List<Result>(0);  // empty query.
+                return new List<Result>(0);
             }
             
             if (value.Length < 3)
@@ -54,21 +54,22 @@ namespace mptr.jira
                     }
                 };
             }
-
-            bool IsQueryNumbersOnly = Regex.IsMatch(value, @"^\d{3}\d*$");
-            string UserTicket = value.ToString().Trim();
+         
+            string UserTicket = value.ToUpper();
             string FullTicketNumber = null;
             string JiraURL = null;
 
-            if (UserTicket.Contains(DefaultTicketPrefix + "-"))
+            if (Regex.IsMatch(UserTicket, @"^\w*?-\d{3}\d*$"))
             {
+                // query is probably NONDEFAULTTICKET-XXX, suggest to browse that.
                 FullTicketNumber = UserTicket;
-                JiraURL = UrlPrefix + "browse/" + FullTicketNumber; // query is "TICKET-XXXX".
+                JiraURL = UrlPrefix + "browse/" + FullTicketNumber;
             }
-            else if (IsQueryNumbersOnly)
+            else if (Regex.IsMatch(UserTicket, @"^\d{3}\d*$"))
             {
+                // query is only numbers, suggest with default ticket prefix.
                 FullTicketNumber = DefaultTicketPrefix + "-" + UserTicket;
-                JiraURL = UrlPrefix + "browse/" + FullTicketNumber; // query is "XXXX".
+                JiraURL = UrlPrefix + "browse/" + FullTicketNumber;
             }
 
             List<Result> ToReturn = new List<Result>();
