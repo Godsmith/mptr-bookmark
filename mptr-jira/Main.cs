@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Wox.Plugin;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Web;
 
 namespace mptr.jira
 {
@@ -15,10 +16,10 @@ namespace mptr.jira
         private PluginInitContext Context { get; set; }
         public string Name => "jira";
 
-        public string Description => "Open Jira tickets based on ticket number.";
+        public string Description => "Microsoft Powertoys Run plugin for Atlassian Jira.";
 
-        // url to jira (should end with "browse/").
-        private string UrlPrefix => "https://my.internal.server/browse/";
+        // url to jira (should end with a slash, i.e. "/").
+        private string UrlPrefix => "https://my.internal.server/";
         // default ticket type, if query is only numbers (should be without dash, i.e. "-").
         private string DefaultTicketPrefix => "TICKET";
 
@@ -36,13 +37,13 @@ namespace mptr.jira
                 return new List<Result>(0);  // empty query.
             }
             
-            if (!Regex.IsMatch(value, @"\b\d{3}\d*\b"))
+            if (value.Length < 3)
             {
                 return new List<Result>
                 {
                     new Result
                     {
-                        Title = "Query must contain at least 3 numers",
+                        Title = "Search query must contain at least 3 characters",
                         SubTitle = "Please add more to your query.",
                         IcoPath = IconPath,
                         Action = e =>
@@ -56,33 +57,56 @@ namespace mptr.jira
 
             bool IsQueryNumbersOnly = Regex.IsMatch(value, @"^\d{3}\d*$");
             string UserTicket = value.ToString().Trim();
-            string FullTicketNumber;
+            string FullTicketNumber = null;
+            string JiraURL = null;
+
             if (UserTicket.Contains(DefaultTicketPrefix + "-"))
             {
-                FullTicketNumber = UserTicket; // query is "TICKET-XXXX".
+                FullTicketNumber = UserTicket;
+                JiraURL = UrlPrefix + "browse/" + FullTicketNumber; // query is "TICKET-XXXX".
             }
             else if (IsQueryNumbersOnly)
             {
-                FullTicketNumber = DefaultTicketPrefix + "-" + UserTicket; // query is "XXXX".
-            } else
-            {
-                FullTicketNumber = value.ToUpper();
+                FullTicketNumber = DefaultTicketPrefix + "-" + UserTicket;
+                JiraURL = UrlPrefix + "browse/" + FullTicketNumber; // query is "XXXX".
             }
 
-            return new List<Result>
+            List<Result> ToReturn = new List<Result>();
+
+            if (FullTicketNumber != null && JiraURL != null)
             {
-                new Result
+                ToReturn.Add(
+                    new Result
+                    {
+                        Title = FullTicketNumber,
+                        SubTitle = JiraURL,
+                        IcoPath = IconPath,
+                        Action = e =>
+                        {
+                            OpenUrl(JiraURL);
+                            return true;
+                        },
+                    }
+                );
+            }
+
+            string SearchQuery = value;
+            string JiraSearchURL = UrlPrefix + "secure/QuickSearch.jspa?searchString=" + HttpUtility.UrlEncode(value);
+
+            ToReturn.Add(new Result
                 {
-                    Title = FullTicketNumber,
-                    SubTitle = UrlPrefix + FullTicketNumber,
-                    IcoPath = IconPath,
+                    Title = "Search for: " + SearchQuery,
+                    SubTitle = JiraSearchURL,
+                    IcoPath = "images/jira.search.png",
                     Action = e =>
                     {
-                        OpenUrl(UrlPrefix + FullTicketNumber);
+                        OpenUrl(JiraSearchURL);
                         return true;
                     },
                 }
-            };
+            );
+
+            return ToReturn;
         }
 
         public void Init(PluginInitContext context)
