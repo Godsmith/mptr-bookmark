@@ -18,12 +18,11 @@ For Microsoft Powertoys Run, Open Jira tickets based on ticket number.
 
 ## Installation
 
-1. Close PowerToys
-2. Build
-3. Rename the output directory in `bin/Debug` to mptr-jira
-4. Copy the output directory to `C:\Program Files\PowerToys\modules\launcher\Plugins`
-5. Edit the settings file `C:\Program Files\PowerToys\modules\launcher\Plugins\mptr-jira\settings.json` to your liking
-6. Start PowerToys
+1. Run Visual Studio code as administrator (needed for the build process to copy the plugin to the Program Files directory)
+2. Edit the settings.json file to your liking
+3. Build the project
+
+The plugin will be automatically copied to the PowerToys Run plugins directory and PowerToys will be automatically restarted.
 
 ## Settings File
 
