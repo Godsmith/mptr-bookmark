@@ -1,11 +1,12 @@
 ﻿using ManagedCommon;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using Wox.Plugin;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Web;
+using System.Text.Json;
+using System.IO;
 
 namespace mptr.jira
 {
@@ -18,10 +19,11 @@ namespace mptr.jira
 
         public string Description => "Microsoft Powertoys Run plugin for Atlassian Jira.";
 
+        private Settings settings;
         // url to jira (should end with a slash, i.e. "/").
-        private string UrlPrefix => "https://my.internal.server/";
-        // default ticket type, if query is only numbers (should be without dash, i.e. "-").
-        private string DefaultTicketPrefix => "TICKET";
+        private string UrlPrefix => settings.UrlPrefix
+;        // default ticket type, if query is only numbers (should be without dash, i.e. "-").
+        private string DefaultTicketPrefix => settings.DefaultTicketPrefix;
 
         public List<Result> Query(Query query)
         {
@@ -36,7 +38,7 @@ namespace mptr.jira
             {
                 return new List<Result>(0);
             }
-            
+
             if (value.Length < 3)
             {
                 return new List<Result>
@@ -54,7 +56,7 @@ namespace mptr.jira
                     }
                 };
             }
-         
+
             string UserTicket = value.ToUpper();
             string FullTicketNumber = null;
             string JiraURL = null;
@@ -95,16 +97,16 @@ namespace mptr.jira
             string JiraSearchURL = UrlPrefix + "secure/QuickSearch.jspa?searchString=" + HttpUtility.UrlEncode(value);
 
             ToReturn.Add(new Result
+            {
+                Title = "Search for: " + SearchQuery,
+                SubTitle = JiraSearchURL,
+                IcoPath = "images/jira.search.png",
+                Action = e =>
                 {
-                    Title = "Search for: " + SearchQuery,
-                    SubTitle = JiraSearchURL,
-                    IcoPath = "images/jira.search.png",
-                    Action = e =>
-                    {
-                        OpenUrl(JiraSearchURL);
-                        return true;
-                    },
-                }
+                    OpenUrl(JiraSearchURL);
+                    return true;
+                },
+            }
             );
 
             return ToReturn;
@@ -115,6 +117,10 @@ namespace mptr.jira
             Context = context;
             Context.API.ThemeChanged += OnThemeChanged;
             UpdateIconPath(Context.API.GetCurrentTheme());
+
+            string settingsPath = Path.Combine(Directory.GetCurrentDirectory(), Constants.PluginPath, Constants.PluginFolderName, Constants.JsonSettingsFileName);
+            string jsonSettingsString = File.ReadAllText(settingsPath);
+            settings = JsonSerializer.Deserialize<Settings>(jsonSettingsString);
         }
 
         private void UpdateIconPath(Theme theme)
