@@ -2,6 +2,8 @@
 
 Plugin for Microsoft Powertoys Run that opens Chrome bookmarks containing the provided text.
 
+Based on https://github.com/novafaen/mptr-jira.
+
 ## Usage
 
 ### Show all bookmarks containing both "foo" and "bar"
