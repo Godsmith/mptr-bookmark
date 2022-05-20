@@ -1,26 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace mptr.bookmark
 {
     public static class JsonBookmarks
     {
-        public static List<Bookmark> Get(string path, string iconPath)
+        public static IEnumerable<Bookmark> Get(string path, string iconPath)
         {
             string json = File.ReadAllText(path);
-            Regex rx = new Regex("\"name\": \"(.*?)\".*?\n.*?\n.*?\"url\": \"(.*?)\"");
-            MatchCollection matches = rx.Matches(json);
+            JsonDocument document = JsonDocument.Parse(json);
+            return GetBookmarks(document.RootElement, iconPath);
+        }
 
-            var bookmarks = new List<Bookmark>();
-            foreach (Match match in matches)
+        private static IEnumerable<Bookmark> GetBookmarks(JsonElement element, string iconPath)
+        {
+            if (element.ValueKind == JsonValueKind.Object)
             {
-                GroupCollection groups = match.Groups;
-                Console.WriteLine(groups[1].Value + " " + groups[2].Value);
-                bookmarks.Add(new Bookmark { Name = groups[1].Value, Url = groups[2].Value, IconPath = iconPath });
+                JsonElement url;
+                bool hasUrl = element.TryGetProperty("url", out url);
+                JsonElement name;
+                bool hasName = element.TryGetProperty("name", out name);
+                if (hasUrl && hasName)
+                {
+                    return new List<Bookmark>() { new Bookmark { Name = name.GetString().ToLower(), Url = url.GetString().ToLower(), IconPath = iconPath } };
+                }
+                else { return element.EnumerateObject().SelectMany(property => GetBookmarks(property.Value, iconPath)); }
             }
-            return bookmarks;
+            else if (element.ValueKind == JsonValueKind.Array)
+            {
+                return element.EnumerateArray().SelectMany(element => GetBookmarks(element, iconPath));
+            }
+            else
+            {
+                return new List<Bookmark>();
+            }
         }
     }
 }

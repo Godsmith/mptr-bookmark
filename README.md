@@ -14,7 +14,10 @@ Or, if the "include in global results" setting in the PowerToys settings is enab
 
 `foo bar`
 
+Bookmarks are automatically retrieved from `AppData\Local`.
+
 At least one of the search term has to be three or more characters.
+
 
 ## Installation
 

@@ -28,7 +28,7 @@ namespace mptr.bookmark
                 return new List<Result>(0);
             }
 
-            var searchTerms= query.Search.Trim().Split(" ");
+            var searchTerms = query.Search.Trim().Split(" ");
 
             if (searchTerms.Length == 0)
             {
@@ -43,13 +43,13 @@ namespace mptr.bookmark
             List<Result> ToReturn = new List<Result>();
             foreach (Bookmark bookmark in bookmarks)
             {
-                if (searchTerms.All(searchTerm => bookmark.Url.Contains(searchTerm)))
+                if (searchTerms.All(searchTerm => bookmark.Url.Contains(searchTerm.ToLower())))
                 {
                     ToReturn.Add(
                         new Result
                         {
                             Title = bookmark.Name,
-                            SubTitle = bookmark.Url,
+                            SubTitle = $"Open bookmark: {bookmark.Url}",
                             IcoPath = bookmark.IconPath,
                             Action = e =>
                             {
@@ -70,8 +70,8 @@ namespace mptr.bookmark
             Context.API.ThemeChanged += OnThemeChanged;
             UpdateIconPath(Context.API.GetCurrentTheme());
 
-            var chrome_bookmarks = JsonBookmarks.Get($@"C:\Users\{Environment.UserName}\AppData\Local\Google\Chrome\User Data\Default\Bookmarks", "images/chrome.light.png");
-            var edge_bookmarks = JsonBookmarks.Get($@"C:\Users\{Environment.UserName}\AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks", "images/edge.light.png");
+            var chrome_bookmarks = JsonBookmarks.Get($@"C:\Users\{Environment.UserName}\AppData\Local\Google\Chrome\User Data\Default\Bookmarks", @"images\chrome.light.png");
+            var edge_bookmarks = JsonBookmarks.Get($@"C:\Users\{Environment.UserName}\AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks", @"images\edge.light.png");
             bookmarks = new();
             bookmarks.AddRange(chrome_bookmarks);
             bookmarks.AddRange(edge_bookmarks);
