@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace mptr.bookmark
 {
@@ -14,11 +15,11 @@ namespace mptr.bookmark
 
         public string Name => "Bookmark";
 
-        private List<(string, string)> bookmarks;
+        private List<Bookmark> bookmarks;
 
         private PluginInitContext Context { get; set; }
 
-        public string Description => "Microsoft Powertoys Run plugin for searching among Chrome bookmarks.";
+        public string Description => "Microsoft Powertoys Run plugin for searching among Chrome and Edge bookmarks.";
 
         public List<Result> Query(Query query)
         {
@@ -40,19 +41,19 @@ namespace mptr.bookmark
             }
 
             List<Result> ToReturn = new List<Result>();
-            foreach ((string bookmarkName, string url) in bookmarks)
+            foreach (Bookmark bookmark in bookmarks)
             {
-                if (searchTerms.All(searchTerm => url.Contains(searchTerm)))
+                if (searchTerms.All(searchTerm => bookmark.Url.Contains(searchTerm)))
                 {
                     ToReturn.Add(
                         new Result
                         {
-                            Title = bookmarkName,
-                            SubTitle = url,
-                            IcoPath = IconPath,
+                            Title = bookmark.Name,
+                            SubTitle = bookmark.Url,
+                            IcoPath = bookmark.IconPath,
                             Action = e =>
                             {
-                                OpenUrl(url);
+                                OpenUrl(bookmark.Url);
                                 return true;
                             },
                         }
@@ -69,7 +70,11 @@ namespace mptr.bookmark
             Context.API.ThemeChanged += OnThemeChanged;
             UpdateIconPath(Context.API.GetCurrentTheme());
 
-            bookmarks = ChromeBookmarks.Get();
+            var chrome_bookmarks = JsonBookmarks.Get($@"C:\Users\{Environment.UserName}\AppData\Local\Google\Chrome\User Data\Default\Bookmarks", "images/chrome.light.png");
+            var edge_bookmarks = JsonBookmarks.Get($@"C:\Users\{Environment.UserName}\AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks", "images/edge.light.png");
+            bookmarks = new();
+            bookmarks.AddRange(chrome_bookmarks);
+            bookmarks.AddRange(edge_bookmarks);
         }
 
         private void UpdateIconPath(Theme theme)

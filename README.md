@@ -1,6 +1,6 @@
 # mptr-bookmark
 
-Plugin for Microsoft Powertoys Run that opens Chrome bookmarks containing the provided text.
+Plugin for Microsoft Powertoys Run that opens Chrome and Edge bookmarks containing the provided text.
 
 Based on https://github.com/novafaen/mptr-jira.
 
@@ -14,7 +14,7 @@ Or, if the "include in global results" setting in the PowerToys settings is enab
 
 `foo bar`
 
-At least one search term has to be three characters or more.
+At least one of the search term has to be three or more characters.
 
 ## Installation
 
