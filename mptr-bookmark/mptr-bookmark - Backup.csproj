@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <UseWindowsForms>true</UseWindowsForms>
+        <AssemblyName>mptr-jira</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="PowerToys.Common.UI">
+            <HintPath>libs\PowerToys.Common.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="PowerToys.ManagedCommon">
+            <HintPath>libs\PowerToys.ManagedCommon.dll</HintPath>
+        </Reference>
+        <Reference Include="Wox.Infrastructure">
+            <HintPath>libs\Wox.Infrastructure.dll</HintPath>
+        </Reference>
+        <Reference Include="Wox.Plugin">
+            <HintPath>libs\Wox.Plugin.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+  
+    <ItemGroup>
+        <None Update="images\jira.dark.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="images\jira.light.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="images\jira.search.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="plugin.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="settings.json">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+  
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="robocopy /E /IM bin/Debug/netcoreapp3.1 &quot;C:\Program Files\PowerToys\modules\launcher\Plugins\mptr-bookmark&quot;&#xD;&#xA;powershell start-process 'C:\Program Files\PowerToys\PowerToys.exe'" />
+    </Target>
+  
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+      <Exec Command="call build-events/pre-build.bat" />
+    </Target>
+
+</Project>

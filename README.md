@@ -1,38 +1,22 @@
-# mptr-jira
+# mptr-bookmark
 
-For Microsoft Powertoys Run, Open Jira tickets based on ticket number.
+Plugin for Microsoft Powertoys Run that opens Chrome bookmarks containing the provided text.
 
 ## Usage
 
-### Opening a ticket with the default ticket prefix
+### Show all bookmarks containing both "foo" and "bar"
 
-`jira 123`
+`bookmark foo bar`
 
-### Opening a specific ticket
+Or, if the "include in global results" setting in the PowerToys settings is enabled:
 
-`jira TICKET-123`
+`foo bar`
 
-### Searching
-
-`jira my search query`
+At least one search term has to be three characters or more.
 
 ## Installation
 
-1. Run Visual Studio code as administrator (needed for the build process to copy the plugin to the Program Files directory)
-2. Edit the settings.json file to your liking
-3. Build the project
-
-The plugin will be automatically copied to the PowerToys Run plugins directory and PowerToys will be automatically restarted.
-
-## Settings File
-
-`UrlPrefix` is the URL to your JIRA server. It must end with a slash character (`/`).
-
-`DefaultTicketPrefix`
-
-```
-{
-  "UrlPrefix": "https://my.internal.server/",
-  "DefaultTicketPrefix": "TICKET"
-}
-```
+1. Build the solution at least once, either from inside Visual Studio or with `dotnet build`.
+2. Open cmd as administrator and navigate to this folder.
+3. Run install.bat. This will create a symlink from the PowerToys plugin folder to 
+   the bin directory of this solution and restart PowerToys.

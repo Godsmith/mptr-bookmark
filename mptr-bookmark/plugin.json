@@ -1,0 +1,14 @@
+{
+  "ID": "342f0ca318a94bceeef13b347910f643",
+  "Disabled": false,
+  "ActionKeyword": "bookmark",
+  "Name": "Bookmark",
+  "Author": "Godsmith",
+  "Version": "1.0.0",
+  "Language": "csharp",
+  "Website": "https://github.com/godsmith/mptr-bookmark",
+  "ExecuteFileName": "mptr-bookmark.dll",
+  "IsGlobal": true,
+  "IcoPathDark": "images\\chrome.dark.png",
+  "IcoPathLight": "images\\chrome.light.png"
+}

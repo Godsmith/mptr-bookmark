@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
-        <AssemblyName>mptr-jira</AssemblyName>
+        <AssemblyName>mptr-bookmark</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,25 +23,19 @@
     </ItemGroup>
   
     <ItemGroup>
-        <None Update="images\jira.dark.png">
+        <None Update="images\chrome.dark.png">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="images\jira.light.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="images\jira.search.png">
+        <None Update="images\chrome.light.png">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="plugin.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="settings.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
   
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="robocopy /E /IM bin/Debug/netcoreapp3.1 &quot;C:\Program Files\PowerToys\modules\launcher\Plugins\mptr-jira&quot;&#xD;&#xA;powershell start-process 'C:\Program Files\PowerToys\PowerToys.exe'" />
+      <Exec Command="powershell start-process 'C:\Program Files\PowerToys\PowerToys.exe'" />
     </Target>
   
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
