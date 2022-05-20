@@ -19,6 +19,6 @@ At least one search term has to be three characters or more.
 ## Installation
 
 1. Build the solution at least once, either from inside Visual Studio or with `dotnet build`.
-2. Open cmd as administrator and navigate to this folder.
-3. Run install.bat. This will create a symlink from the PowerToys plugin folder to 
-   the bin directory of this solution and restart PowerToys.
+2. Run cmd as administrator and navigate to this folder.
+3. Run `install.bat`. This will create a symlink from the PowerToys plugin folder to 
+   the output directory of this solution. PowerToys will be restarted.
