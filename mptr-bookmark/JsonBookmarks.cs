@@ -26,7 +26,7 @@ namespace mptr.bookmark
                 bool hasName = element.TryGetProperty("name", out name);
                 if (hasUrl && hasName)
                 {
-                    return new List<Bookmark>() { new Bookmark { Name = name.GetString().ToLower(), Url = url.GetString().ToLower(), IconPath = iconPath } };
+                    return new List<Bookmark>() { new Bookmark { Name = name.GetString(), Url = url.GetString().ToLower(), IconPath = iconPath } };
                 }
                 else { return element.EnumerateObject().SelectMany(property => GetBookmarks(property.Value, iconPath)); }
             }
