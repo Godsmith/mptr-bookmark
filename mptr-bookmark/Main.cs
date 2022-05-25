@@ -43,7 +43,7 @@ namespace mptr.bookmark
             List<Result> ToReturn = new List<Result>();
             foreach (Bookmark bookmark in bookmarks)
             {
-                if (searchTerms.All(searchTerm => bookmark.Url.Contains(searchTerm.ToLower())))
+                if (searchTerms.All(searchTerm => bookmark.Name.ToLower().Contains(searchTerm.ToLower())))
                 {
                     ToReturn.Add(
                         new Result
